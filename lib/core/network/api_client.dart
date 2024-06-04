@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class ApiClient {
   final String baseUrl;
   final Logger _logger = Logger();
 
-  ApiClient({required this.baseUrl});
+  ApiClient(@Named('baseUrl') this.baseUrl);
 
   Future<List<dynamic>> getArticles() async {
     final response = await http.get(Uri.parse('$baseUrl/newsapp/articles'));

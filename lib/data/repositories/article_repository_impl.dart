@@ -3,7 +3,9 @@ import 'package:celebrities/data/models/article_model.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/repositories/article_repository.dart';
 import 'package:logger/logger.dart';
+import 'package:injectable/injectable.dart';
 
+@Injectable(as: ArticleRepository)
 class ArticleRepositoryImpl implements ArticleRepository {
   final ApiClient apiClient;
   final Logger _logger = Logger();
@@ -21,4 +23,3 @@ class ArticleRepositoryImpl implements ArticleRepository {
     });
   }
 }
-

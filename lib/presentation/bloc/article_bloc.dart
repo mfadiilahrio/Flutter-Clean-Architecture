@@ -1,7 +1,9 @@
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/usecases/get_articles.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class ArticleBloc {
   final GetArticles getArticles;
   final _articlesSubject = BehaviorSubject<List<Article>>.seeded([]);

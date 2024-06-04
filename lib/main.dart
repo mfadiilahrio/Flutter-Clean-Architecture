@@ -1,9 +1,11 @@
+import 'package:celebrities/di/di.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'presentation/pages/article_page.dart';
 
 void main() {
   initializeDateFormatting('id_ID', null).then((_) {
+    configureDependencies();
     runApp(MyApp());
   });
 }

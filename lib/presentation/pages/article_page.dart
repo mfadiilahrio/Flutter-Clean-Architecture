@@ -7,6 +7,7 @@ import 'package:celebrities/presentation/bloc/article_bloc.dart';
 import 'package:celebrities/presentation/widgets/article_widget.dart';
 import 'package:celebrities/presentation/widgets/image_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ArticlePage extends StatefulWidget {
@@ -19,18 +20,9 @@ class ArticlePage extends StatefulWidget {
 }
 
 class _ArticlePageState extends State<ArticlePage> {
-  final ArticleBloc bloc;
+  final ArticleBloc bloc = GetIt.I<ArticleBloc>();
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0;
-
-  _ArticlePageState()
-      : bloc = ArticleBloc(
-    getArticles: GetArticles(
-      ArticleRepositoryImpl(
-        apiClient: ApiClient(baseUrl: 'https://60a4954bfbd48100179dc49d.mockapi.io/api/innocent'),
-      ),
-    ),
-  );
 
   @override
   void initState() {
