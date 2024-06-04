@@ -1,43 +1,69 @@
 import 'package:celebrities/domain/entities/article.dart';
-import 'package:celebrities/domain/repositories/article_repository.dart';
 import 'package:celebrities/domain/usecases/get_articles.dart';
 import 'package:celebrities/presentation/bloc/article_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'article_bloc_test.mocks.dart';
 
-class MockArticleRepository extends Mock implements ArticleRepository {}
-
+@GenerateMocks([GetArticles])
 void main() {
   late ArticleBloc bloc;
-  late MockArticleRepository mockArticleRepository;
-  late GetArticles getArticles;
+  late MockGetArticles mockGetArticles;
 
   setUp(() {
-    mockArticleRepository = MockArticleRepository();
-    getArticles = GetArticles(mockArticleRepository);
-    bloc = ArticleBloc(getArticles: getArticles);
+    mockGetArticles = MockGetArticles();
+    bloc = ArticleBloc(getArticles: mockGetArticles);
   });
 
-  test('should fetch articles from the repository', () async {
-    // arrange
-    final articles = [Article(id: '1', title: 'Title', content: 'Content')];
-    when(mockArticleRepository.getArticles()).thenAnswer((_) => Stream.value(articles));
+  final tArticle = Article(
+    id: '1',
+    title: 'Test Title',
+    content: 'Test Content',
+    contentThumbnail: 'http://test.com/thumbnail.jpg',
+    contributorName: 'Contributor',
+    createdAt: '2021-06-01T12:00:00Z',
+    slideshow: ['http://test.com/slide1.jpg'],
+  );
 
-    // act
-    bloc.fetchArticles();
+  final tArticleList = [tArticle];
 
-    // assert
-    await expectLater(bloc.articlesStream, emitsInOrder([articles]));
+  test('initial state should be empty list', () {
+    expect(bloc.articlesStream, emits([]));
   });
 
-  test('should handle null articles gracefully', () async {
+  test('should emit [articles] when data is gotten successfully', () async {
     // arrange
-    when(mockArticleRepository.getArticles()).thenAnswer((_) => Stream.value([]));
+    when(mockGetArticles.execute())
+        .thenAnswer((_) => Stream.value(tArticleList));
+
+    // assert later
+    final expected = [
+      [], // Initial state is an empty list
+      tArticleList, // Then it emits the list of articles
+    ];
+    expect(bloc.articlesStream, emitsInOrder(expected));
 
     // act
-    bloc.fetchArticles();
+    await bloc.fetchArticles();
+  });
 
-    // assert
-    await expectLater(bloc.articlesStream, emitsInOrder([[]]));
+  test('should emit [error] when getting data fails', () async {
+    // arrange
+    when(mockGetArticles.execute()).thenAnswer((_) => Stream.error('Server Failure'));
+
+    // assert later
+    final expected = [
+      [], // Initial state is an empty list
+      emitsError('Server Failure'),
+    ];
+    expect(bloc.articlesStream, emitsInOrder(expected));
+
+    // act
+    await bloc.fetchArticles();
+  });
+
+  tearDown(() {
+    bloc.dispose();
   });
 }
