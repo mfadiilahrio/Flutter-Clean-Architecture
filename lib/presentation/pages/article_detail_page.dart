@@ -86,6 +86,13 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
               hasSlideshow ? widget.article.slideshow[_selectedImageIndex] : widget.article.contentThumbnail,
               fit: BoxFit.cover,
               width: double.infinity, // Make the selected image full width
+              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                return Container(
+                  width: double.infinity,
+                  height: 200,
+                  color: Colors.grey[300], // Grey background on error
+                );
+              },
             ),
             SizedBox(height: 8.0),
             hasSlideshow
@@ -110,6 +117,13 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                         fit: BoxFit.cover,
                         color: _selectedImageIndex == index ? Colors.black.withOpacity(0.4) : null,
                         colorBlendMode: BlendMode.darken,
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return Container(
+                            width: 100.0,
+                            height: 100.0,
+                            color: Colors.grey[300], // Grey background on error
+                          );
+                        },
                       ),
                     ),
                   );

@@ -92,6 +92,13 @@ class ImageSlider extends StatelessWidget {
                                 ),
                               );
                             },
+                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                              return Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                color: Colors.grey[300], // Grey background on error
+                              );
+                            },
                           ),
                         ],
                       ),

@@ -8,12 +8,12 @@
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
-import 'package:celebrities/config.dart' as _i8;
-import 'package:celebrities/core/network/api_client.dart' as _i3;
-import 'package:celebrities/data/repositories/article_repository_impl.dart' as _i5;
-import 'package:celebrities/domain/repositories/article_repository.dart' as _i4;
-import 'package:celebrities/domain/usecases/get_articles.dart' as _i6;
-import 'package:celebrities/presentation/bloc/article_bloc.dart'
+import '../config.dart' as _i8;
+import '../core/network/api_client.dart' as _i3;
+import '../data/repositories/article_repository_impl.dart' as _i5;
+import '../domain/repositories/article_repository.dart' as _i4;
+import '../domain/usecases/get_articles.dart' as _i6;
+import '../presentation/bloc/article_bloc.dart'
     as _i7; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars

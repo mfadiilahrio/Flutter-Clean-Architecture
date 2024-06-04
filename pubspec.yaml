@@ -40,6 +40,7 @@ dependencies:
   fluttertoast: ^8.0.9
   get_it: ^7.2.0
   injectable: ^1.5.0
+  path: ^1.8.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +53,7 @@ dev_dependencies:
   mockito: ^5.0.16
   build_runner: ^2.1.7
   injectable_generator: ^1.5.0
+  sqflite: ^2.0.0+4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

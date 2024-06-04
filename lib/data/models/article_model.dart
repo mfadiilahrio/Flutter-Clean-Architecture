@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:equatable/equatable.dart';
 
@@ -17,7 +18,7 @@ class ArticleModel extends Equatable {
     required this.contentThumbnail,
     required this.contributorName,
     required this.createdAt,
-    this.slideshow = const [], // Default value for slideshow
+    this.slideshow = const [],
   });
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) {
@@ -28,8 +29,32 @@ class ArticleModel extends Equatable {
       contentThumbnail: json['contentThumbnail'],
       contributorName: json['contributorName'],
       createdAt: json['createdAt'],
-      slideshow: json['slideshow'] != null ? List<String>.from(json['slideshow']) : [], // Handle null slideshow
+      slideshow: json['slideshow'] != null ? List<String>.from(json['slideshow']) : [],
     );
+  }
+
+  factory ArticleModel.fromEntity(Article article) {
+    return ArticleModel(
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      contentThumbnail: article.contentThumbnail,
+      contributorName: article.contributorName,
+      createdAt: article.createdAt,
+      slideshow: article.slideshow,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'contentThumbnail': contentThumbnail,
+      'contributorName': contributorName,
+      'createdAt': createdAt,
+      'slideshow': jsonEncode(slideshow),
+    };
   }
 
   Article toEntity() {
