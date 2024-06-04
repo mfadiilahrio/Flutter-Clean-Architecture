@@ -1,4 +1,5 @@
 import 'package:celebrities/domain/entities/article.dart';
+import 'package:celebrities/presentation/pages/article_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,35 +24,45 @@ class ArticleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            article.contentThumbnail,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 200,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleDetailPage(article: article),
           ),
-          const SizedBox(height: 8),
-          Text(
-            article.contributorName,
-            style: TextStyle(fontSize: 16, color: Colors.pink),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            article.content,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            formatRelativeTime(article.createdAt),
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-        ],
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(
+              article.contentThumbnail,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 200,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              article.contributorName,
+              style: TextStyle(fontSize: 16, color: Colors.pink),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              article.content,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              formatRelativeTime(article.createdAt),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }

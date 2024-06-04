@@ -5,6 +5,7 @@ import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/usecases/get_articles.dart';
 import 'package:celebrities/presentation/bloc/article_bloc.dart';
 import 'package:celebrities/presentation/widgets/article_widget.dart';
+import 'package:celebrities/presentation/widgets/image_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -61,7 +62,7 @@ class _ArticlePageState extends State<ArticlePage> {
         elevation: 2.0, // Add a thin shadow
         centerTitle: true, // Center the title
         title: Image.asset(
-          'assets/logo.png', // Path to your PNG image
+          'assets/logo.png',
           height: 30, // Set the desired height for the logo
         ),
       ),
@@ -141,106 +142,21 @@ class _ArticlePageState extends State<ArticlePage> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Image Slider
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: CarouselSlider(
-                        carouselController: _carouselController,
-                        options: CarouselOptions(
-                          height: MediaQuery.of(context).size.width * 0.8,
-                          autoPlay: true,
-                          enlargeCenterPage: true,
-                          aspectRatio: 16 / 9,
-                          autoPlayCurve: Curves.fastOutSlowIn,
-                          enableInfiniteScroll: true,
-                          autoPlayAnimationDuration: Duration(milliseconds: 800),
-                          viewportFraction: 1.0, // Ensure no margin between items
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              _currentIndex = index;
-                            });
-                          },
-                        ),
-                        items: sliderArticles.map((article) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: Shimmer.fromColors(
-                                        baseColor: Colors.grey[300]!,
-                                        highlightColor: Colors.grey[100]!,
-                                        child: Container(
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Image.network(
-                                      article.contentThumbnail,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress.expectedTotalBytes != null
-                                                ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                                : null,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                child: Text(
-                                  article.contributorName,
-                                  style: TextStyle(fontSize: 16, color: Colors.pink),
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                child: Text(
-                                  article.content,
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                    ImageSlider(
+                      articles: sliderArticles,
+                      carouselController: _carouselController,
+                      currentIndex: _currentIndex,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(3, (index) {
-                          return GestureDetector(
-                            onTap: () => _carouselController.animateToPage(index),
-                            child: Container(
-                              width: _currentIndex == index ? 35.0 : 20.0,  // Active indicator wider than inactive
-                              height: 6.0,  // Adjust the height for a more pill shape
-                              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(3.0),  // Adjust the radius for a more pill shape
-                                color: _currentIndex == index
-                                    ? Colors.pinkAccent
-                                    : Colors.grey.withOpacity(0.4),
-                              ),
-                            ),
-                          );
-                        }),
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
+                        'LATEST NEWS',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
                     ListView.separated(

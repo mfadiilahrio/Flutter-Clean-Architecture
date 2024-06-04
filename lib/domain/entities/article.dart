@@ -7,6 +7,7 @@ class Article extends Equatable {
   final String contentThumbnail;
   final String contributorName;
   final String createdAt;
+  final List<String> slideshow;
 
   Article({
     required this.id,
@@ -15,8 +16,9 @@ class Article extends Equatable {
     required this.contentThumbnail,
     required this.contributorName,
     required this.createdAt,
+    this.slideshow = const [], // Default value for slideshow
   });
 
   @override
-  List<Object?> get props => [id, title, content, contentThumbnail, contributorName, createdAt];
+  List<Object?> get props => [id, title, content, contentThumbnail, contributorName, createdAt, slideshow];
 }
