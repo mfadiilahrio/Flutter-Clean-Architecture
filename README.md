@@ -1,6 +1,12 @@
-# celebrities
+# Flutter Boilerplate
 
-A new Flutter project.
+# Features
+
+- Clean Architecture
+- Dependency Injection
+- RxDart
+- Local DB with SQFlite
+- Unit Test
 
 ## Getting Started
 
