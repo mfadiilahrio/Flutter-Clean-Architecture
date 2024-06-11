@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:celebrities/domain/entities/article.dart';
-import 'package:celebrities/presentation/pages/article_detail_page.dart';
+import 'package:celebrities/presentation/article/pages/article_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 

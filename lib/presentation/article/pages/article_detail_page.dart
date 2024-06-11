@@ -4,6 +4,7 @@ import 'package:celebrities/domain/entities/article.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter/services.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final Article article;
@@ -82,6 +83,10 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             ),
           ),
         ],
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

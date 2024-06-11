@@ -1,19 +1,15 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:celebrities/data/common/Resource.dart';
-import 'package:flutter/material.dart';
 import 'package:celebrities/domain/entities/article.dart';
-import 'package:celebrities/presentation/bloc/article_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
-import 'package:celebrities/presentation/pages/article_detail_page.dart';
-import 'package:celebrities/presentation/widgets/article_widget.dart';
-import 'package:celebrities/presentation/widgets/image_slider.dart';
+import 'package:celebrities/presentation/article/bloc/article_bloc.dart';
+import 'package:celebrities/presentation/article/widgets/article_widget.dart';
+import 'package:celebrities/presentation/article/widgets/image_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ArticlePage extends StatefulWidget {
-  final Key? key;
-
-  ArticlePage({this.key}) : super(key: key);
-
   @override
   _ArticlePageState createState() => _ArticlePageState();
 }
@@ -49,12 +45,17 @@ class _ArticlePageState extends State<ArticlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2.0,
-        centerTitle: true,
         title: Image.asset(
           'assets/logo.png',
           height: 30,
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        actionsIconTheme: IconThemeData(color: Colors.black),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
         ),
       ),
       body: RefreshIndicator(

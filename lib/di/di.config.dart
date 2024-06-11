@@ -13,7 +13,7 @@ import '../core/network/api_client.dart' as _i3;
 import '../data/repositories/article_repository_impl.dart' as _i5;
 import '../domain/repositories/article_repository.dart' as _i4;
 import '../domain/usecases/get_articles.dart' as _i6;
-import '../presentation/bloc/article_bloc.dart'
+import '../presentation/article/bloc/article_bloc.dart'
     as _i7; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars

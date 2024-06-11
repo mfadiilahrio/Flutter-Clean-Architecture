@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:celebrities/domain/entities/article.dart' as _i5;
+import 'package:celebrities/data/common/Resource.dart' as _i5;
+import 'package:celebrities/domain/entities/article.dart' as _i6;
 import 'package:celebrities/domain/repositories/article_repository.dart' as _i2;
 import 'package:celebrities/domain/usecases/get_articles.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
@@ -52,11 +53,11 @@ class MockGetArticles extends _i1.Mock implements _i3.GetArticles {
       ) as _i2.ArticleRepository);
 
   @override
-  _i4.Stream<List<_i5.Article>> execute() => (super.noSuchMethod(
+  _i4.Stream<_i5.Resource<List<_i6.Article>>> execute() => (super.noSuchMethod(
         Invocation.method(
           #execute,
           [],
         ),
-        returnValue: _i4.Stream<List<_i5.Article>>.empty(),
-      ) as _i4.Stream<List<_i5.Article>>);
+        returnValue: _i4.Stream<_i5.Resource<List<_i6.Article>>>.empty(),
+      ) as _i4.Stream<_i5.Resource<List<_i6.Article>>>);
 }

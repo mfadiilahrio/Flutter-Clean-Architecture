@@ -1,5 +1,5 @@
 import 'package:celebrities/domain/entities/article.dart';
-import 'package:celebrities/presentation/pages/article_detail_page.dart';
+import 'package:celebrities/presentation/article/pages/article_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

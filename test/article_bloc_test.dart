@@ -1,6 +1,6 @@
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/usecases/get_articles.dart';
-import 'package:celebrities/presentation/bloc/article_bloc.dart';
+import 'package:celebrities/presentation/article/bloc/article_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
