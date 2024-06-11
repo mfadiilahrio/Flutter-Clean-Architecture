@@ -1,3 +1,4 @@
+import 'package:celebrities/data/common/Resource.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/usecases/get_articles.dart';
 import 'package:rxdart/rxdart.dart';
@@ -6,20 +7,20 @@ import 'package:injectable/injectable.dart';
 @injectable
 class ArticleBloc {
   final GetArticles getArticles;
-  final _articlesSubject = BehaviorSubject<List<Article>>.seeded([]);
+  final _articlesSubject = BehaviorSubject<Resource<List<Article>>>.seeded(Resource.loading());
 
-  Stream<List<Article>> get articlesStream => _articlesSubject.stream;
+  Stream<Resource<List<Article>>> get articlesStream => _articlesSubject.stream;
 
   ArticleBloc({required this.getArticles});
 
   Future<void> fetchArticles() async {
     try {
       final articlesStream = getArticles.execute();
-      await for (var articles in articlesStream) {
-        _articlesSubject.add(articles);
+      await for (var resource in articlesStream) {
+        _articlesSubject.add(resource);
       }
     } catch (e) {
-      _articlesSubject.addError(e);
+      _articlesSubject.add(Resource.error(e.toString()));
     }
   }
 

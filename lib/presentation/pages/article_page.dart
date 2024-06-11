@@ -1,13 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:celebrities/core/network/api_client.dart';
-import 'package:celebrities/data/repositories/article_repository_impl.dart';
+import 'package:celebrities/data/common/Resource.dart';
+import 'package:flutter/material.dart';
 import 'package:celebrities/domain/entities/article.dart';
-import 'package:celebrities/domain/usecases/get_articles.dart';
 import 'package:celebrities/presentation/bloc/article_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:celebrities/presentation/pages/article_detail_page.dart';
 import 'package:celebrities/presentation/widgets/article_widget.dart';
 import 'package:celebrities/presentation/widgets/image_slider.dart';
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ArticlePage extends StatefulWidget {
@@ -50,26 +49,26 @@ class _ArticlePageState extends State<ArticlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // Set background color to white
-        elevation: 2.0, // Add a thin shadow
-        centerTitle: true, // Center the title
+        backgroundColor: Colors.white,
+        elevation: 2.0,
+        centerTitle: true,
         title: Image.asset(
           'assets/logo.png',
-          height: 30, // Set the desired height for the logo
+          height: 30,
         ),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshArticles,
         color: Colors.pink,
         backgroundColor: Colors.white,
-        child: StreamBuilder<List<Article>>(
+        child: StreamBuilder<Resource<List<Article>>>(
           stream: bloc.articlesStream,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            final resource = snapshot.data;
+            if (resource == null || resource.status == Status.Loading) {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Skeleton for Image Slider
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: _buildSkeleton(MediaQuery.of(context).size.width, MediaQuery.of(context).size.width * 0.8),
@@ -87,6 +86,18 @@ class _ArticlePageState extends State<ArticlePage> {
                           ),
                         );
                       }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 120,
+                          height: 24,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                     ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
@@ -124,13 +135,11 @@ class _ArticlePageState extends State<ArticlePage> {
                   ],
                 ),
               );
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No articles available'));
-            } else {
-              // Get the first 3 articles for the slider
-              final sliderArticles = snapshot.data!.take(3).toList();
+            } else if (resource.status == Status.Error) {
+              return Center(child: Text('Error: ${resource.message}'));
+            } else if (resource.status == Status.Success && resource.data != null) {
+              final articles = resource.data!;
+              final sliderArticles = articles.take(3).toList();
               return SingleChildScrollView(
                 child: Column(
                   children: [
@@ -154,9 +163,9 @@ class _ArticlePageState extends State<ArticlePage> {
                     ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
+                      itemCount: articles.length,
                       itemBuilder: (context, index) {
-                        final article = snapshot.data![index];
+                        final article = articles[index];
                         return ArticleWidget(article: article);
                       },
                       separatorBuilder: (context, index) {
@@ -172,6 +181,8 @@ class _ArticlePageState extends State<ArticlePage> {
                   ],
                 ),
               );
+            } else {
+              return Center(child: Text('No articles available'));
             }
           },
         ),

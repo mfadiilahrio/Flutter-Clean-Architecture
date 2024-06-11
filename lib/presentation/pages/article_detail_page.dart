@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final Article article;
@@ -15,6 +16,14 @@ class ArticleDetailPage extends StatefulWidget {
 
 class _ArticleDetailPageState extends State<ArticleDetailPage> {
   int _selectedImageIndex = 0;
+  bool _isMainImageLoading = true;
+  List<bool> _isSlideshowLoading = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _isSlideshowLoading = List<bool>.filled(widget.article.slideshow.length, true);
+  }
 
   String formatDate(String createdAt) {
     final createdDate = DateTime.parse(createdAt);
@@ -33,23 +42,35 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     );
   }
 
+  Widget _buildShimmer(double width, double height) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: width,
+        height: height,
+        color: Colors.white,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool hasSlideshow = widget.article.slideshow.isNotEmpty;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 2.0, // Add a thin shadow
+        elevation: 2.0,
         centerTitle: true,
-        leadingWidth: 100, // Adjust the leading width to fit the larger logo
+        leadingWidth: 100,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0), // Adjust padding as needed
+          padding: const EdgeInsets.all(8.0),
           child: Image.asset(
             'assets/logo.png',
-            height: 40, // Set the desired height for the logo
+            height: 40,
           ),
         ),
-        title: Container(), // Empty container to center the leading and actions
+        title: Container(),
         actions: [
           Center(
             child: Padding(
@@ -82,17 +103,43 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             SizedBox(height: 16.0),
-            Image.network(
-              hasSlideshow ? widget.article.slideshow[_selectedImageIndex] : widget.article.contentThumbnail,
-              fit: BoxFit.cover,
-              width: double.infinity, // Make the selected image full width
-              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                return Container(
+            Stack(
+              children: [
+                if (_isMainImageLoading) _buildShimmer(double.infinity, 200.0),
+                Image.network(
+                  hasSlideshow ? widget.article.slideshow[_selectedImageIndex] : widget.article.contentThumbnail,
+                  fit: BoxFit.cover,
                   width: double.infinity,
-                  height: 200,
-                  color: Colors.grey[300], // Grey background on error
-                );
-              },
+                  height: 200.0,
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          setState(() {
+                            _isMainImageLoading = false;
+                          });
+                        }
+                      });
+                      return child;
+                    }
+                    return _buildShimmer(double.infinity, 200.0);
+                  },
+                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        setState(() {
+                          _isMainImageLoading = false;
+                        });
+                      }
+                    });
+                    return Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey[300],
+                    );
+                  },
+                ),
+              ],
             ),
             SizedBox(height: 8.0),
             hasSlideshow
@@ -108,29 +155,54 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                         _selectedImageIndex = index;
                       });
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Image.network(
-                        widget.article.slideshow[index],
-                        width: 100.0,
-                        height: 100.0,
-                        fit: BoxFit.cover,
-                        color: _selectedImageIndex == index ? Colors.black.withOpacity(0.4) : null,
-                        colorBlendMode: BlendMode.darken,
-                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                          return Container(
+                    child: Stack(
+                      children: [
+                        if (_isSlideshowLoading[index]) _buildShimmer(100.0, 100.0),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Image.network(
+                            widget.article.slideshow[index],
                             width: 100.0,
                             height: 100.0,
-                            color: Colors.grey[300], // Grey background on error
-                          );
-                        },
-                      ),
+                            fit: BoxFit.cover,
+                            color: _selectedImageIndex == index ? Colors.black.withOpacity(0.4) : null,
+                            colorBlendMode: BlendMode.darken,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isSlideshowLoading[index] = false;
+                                    });
+                                  }
+                                });
+                                return child;
+                              }
+                              return _buildShimmer(100.0, 100.0);
+                            },
+                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted) {
+                                  setState(() {
+                                    _isSlideshowLoading[index] = false;
+                                  });
+                                }
+                              });
+                              return Container(
+                                width: 100.0,
+                                height: 100.0,
+                                color: Colors.grey[300],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
             )
-                : Container(), // Handle case when slideshow is empty
+                : Container(),
             SizedBox(height: 16.0),
             Text(
               "Foto: " + widget.article.contributorName,
