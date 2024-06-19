@@ -59,33 +59,33 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
   Widget build(BuildContext context) {
     final bool hasSlideshow = widget.article.slideshow.isNotEmpty;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2.0,
-        centerTitle: true,
-        leadingWidth: 100,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'assets/logo.png',
-            height: 40,
-          ),
-        ),
-        title: Container(),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "K-POP",
-                style: TextStyle(fontSize: 16, color: Colors.pink),
-              ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(56.0),
+        child: AppBar(
+          centerTitle: true,
+          leadingWidth: 100,
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/logo.png',
+              height: 40,
             ),
           ),
-        ],
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
-          statusBarIconBrightness: Brightness.dark,
+          title: Container(),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          elevation: 15.0, // Shadow effect for AppBar
+          iconTheme: Theme.of(context).appBarTheme.iconTheme,
+          actions: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  "K-POP",
+                  style: TextStyle(fontSize: 16, color: Colors.pink),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -222,7 +222,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             RichText(
               text: TextSpan(
                 text: 'Baca juga: ',
-                style: TextStyle(color: Colors.black, fontSize: 16),
+                style: TextStyle(fontSize: 16),
                 children: <TextSpan>[
                   TextSpan(
                     text: 'Wah! Ternyata Ini Kebiasaan Tidur Aneh Anggota BTS',

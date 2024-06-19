@@ -69,7 +69,7 @@ class ArticleWidget extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               article.content,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),

@@ -44,24 +44,23 @@ class _ArticlePageState extends State<ArticlePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset(
-          'assets/logo.png',
-          height: 30,
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        actionsIconTheme: IconThemeData(color: Colors.black),
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
-          statusBarIconBrightness: Brightness.dark,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(56.0),
+        child: AppBar(
+          title: Image.asset(
+            'assets/logo.png',
+            height: 30,
+          ),
+          centerTitle: true,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          elevation: 15.0, // Shadow effect for AppBar
+          iconTheme: Theme.of(context).appBarTheme.iconTheme
         ),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshArticles,
         color: Colors.pink,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         child: StreamBuilder<Resource<List<Article>>>(
           stream: bloc.articlesStream,
           builder: (context, snapshot) {

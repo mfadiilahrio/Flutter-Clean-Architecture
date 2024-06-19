@@ -14,43 +14,85 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  static const MaterialColor whiteSwatch = MaterialColor(
+    _whitePrimaryValue,
+    <int, Color>{
+      50: Color(0xFFFFFFFF),
+      100: Color(0xFFFFFFFF),
+      200: Color(0xFFFFFFFF),
+      300: Color(0xFFFFFFFF),
+      400: Color(0xFFFFFFFF),
+      500: Color(_whitePrimaryValue),
+      600: Color(0xFFFFFFFF),
+      700: Color(0xFFFFFFFF),
+      800: Color(0xFFFFFFFF),
+      900: Color(0xFFFFFFFF),
+    },
+  );
+  static const int _whitePrimaryValue = 0xFFFFFFFF;
+
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      child: MaterialApp(
-        title: 'My App',
-        theme: ThemeData(
-          primarySwatch: Colors.pink,
-          scaffoldBackgroundColor: Colors.white,
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            secondary: Colors.pink,
-            background: Colors.white,
-            onBackground: Colors.black,
-          ),
-          appBarTheme: AppBarTheme(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.white,
-              statusBarIconBrightness: Brightness.dark,
-            ),
-          ),
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.white,
-            selectedItemColor: Colors.pink,
-            unselectedItemColor: Colors.grey,
-          ),
-          textTheme: TextTheme(
-            bodyText1: TextStyle(color: Colors.black),
-            bodyText2: TextStyle(color: Colors.black),
-          ),
+    return MaterialApp(
+      title: 'Celebrities',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: whiteSwatch,
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: whiteSwatch,
+          brightness: Brightness.light,
+        ).copyWith(
+          secondary: Colors.pink,
+          background: Colors.white,
+          onBackground: Colors.black,
         ),
-        home: HomePage(),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 4.0, // Shadow effect for light theme
+          iconTheme: IconThemeData(color: Colors.black),
+          shadowColor: Colors.grey.withOpacity(0.9)
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.pink,
+          unselectedItemColor: Colors.grey,
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+        ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: whiteSwatch,
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: whiteSwatch,
+          brightness: Brightness.dark,
+        ).copyWith(
+          secondary: Colors.pink,
+          background: Colors.black,
+          onBackground: Colors.white,
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          elevation: 4.0, // Shadow effect for dark theme
+          iconTheme: IconThemeData(color: Colors.white),
+          shadowColor: Colors.grey.withOpacity(0.5)
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.pink,
+          unselectedItemColor: Colors.grey,
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),
+        ),
+      ),
+      themeMode: ThemeMode.system, // Follow system theme
+      home: HomePage(),
     );
   }
 }
