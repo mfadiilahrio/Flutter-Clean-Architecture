@@ -4,10 +4,10 @@ import 'package:celebrities/domain/repositories/article_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class GetArticles {
+class GetArticlesUseCase {
   final ArticleRepository repository;
 
-  GetArticles(this.repository);
+  GetArticlesUseCase(this.repository);
 
   Stream<Resource<List<Article>>> execute() {
     return repository.getArticles();

@@ -1,4 +1,5 @@
 import 'package:celebrities/core/network/api_client.dart';
+import 'package:celebrities/core/network/article_api.dart';
 import 'package:celebrities/data/common/Resource.dart';
 import 'package:celebrities/data/local/database_helper.dart';
 import 'package:celebrities/data/models/article_model.dart';
@@ -10,11 +11,11 @@ import 'dart:io';
 
 @Injectable(as: ArticleRepository)
 class ArticleRepositoryImpl implements ArticleRepository {
-  final ApiClient apiClient;
+  final ArticleApi api;
   final Logger _logger = Logger();
   final DatabaseHelper databaseHelper = DatabaseHelper();
 
-  ArticleRepositoryImpl({required this.apiClient});
+  ArticleRepositoryImpl({required this.api});
 
   @override
   Stream<Resource<List<Article>>> getArticles() async* {
@@ -31,7 +32,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
 
     try {
       _logger.i('Fetching articles from API');
-      List<dynamic> remoteArticles = await apiClient.getArticles();
+      List<dynamic> remoteArticles = await api.getArticles();
       List<Article> articles = remoteArticles.map((article) => ArticleModel.fromJson(article).toEntity()).toList();
 
       await databaseHelper.deleteAllArticles();

@@ -1,19 +1,32 @@
+import 'package:celebrities/data/local/shared_preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'di/di.dart';
 import 'presentation/article/pages/article_page.dart';
+import 'presentation/login/pages/login_page.dart';
 import 'presentation/profile/pages/profile_page.dart';
 import 'presentation/sync/pages/sync_page.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 
-void main() {
-  initializeDateFormatting('id_ID', null).then((_) {
-    configureDependencies();
-    runApp(MyApp());
-  });
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
+  await configureDependencies();
+
+  final sharedPreferencesService = SharedPreferencesService();
+  await sharedPreferencesService.init();
+  GetIt.I.registerSingleton<SharedPreferencesService>(sharedPreferencesService);
+
+  final isLoggedIn = sharedPreferencesService.isLoggedIn;
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
+  final bool isLoggedIn;
+
+  MyApp({required this.isLoggedIn});
+
   static const MaterialColor whiteSwatch = MaterialColor(
     _whitePrimaryValue,
     <int, Color>{
@@ -37,10 +50,10 @@ class MyApp extends StatelessWidget {
       title: 'Celebrities',
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: whiteSwatch,
+        primarySwatch: Colors.pink,
         scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: whiteSwatch,
+          primarySwatch: Colors.pink,
           brightness: Brightness.light,
         ).copyWith(
           secondary: Colors.pink,
@@ -51,7 +64,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           elevation: 4.0, // Shadow effect for light theme
           iconTheme: IconThemeData(color: Colors.black),
-          shadowColor: Colors.grey.withOpacity(0.9)
+          shadowColor: Colors.grey.withOpacity(0.9),
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.white,
@@ -65,10 +78,10 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: whiteSwatch,
+        primarySwatch: Colors.pink,
         scaffoldBackgroundColor: Colors.black,
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: whiteSwatch,
+          primarySwatch: Colors.pink,
           brightness: Brightness.dark,
         ).copyWith(
           secondary: Colors.pink,
@@ -79,7 +92,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.black,
           elevation: 4.0, // Shadow effect for dark theme
           iconTheme: IconThemeData(color: Colors.white),
-          shadowColor: Colors.grey.withOpacity(0.5)
+          shadowColor: Colors.grey.withOpacity(0.5),
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.black,
@@ -92,7 +105,11 @@ class MyApp extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.system, // Follow system theme
-      home: HomePage(),
+      initialRoute: isLoggedIn ? '/home' : '/login',
+      routes: {
+        '/login': (context) => getIt<LoginPage>(),
+        '/home': (context) => HomePage(),
+      },
     );
   }
 }

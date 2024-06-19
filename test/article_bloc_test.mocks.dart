@@ -8,7 +8,7 @@ import 'dart:async' as _i4;
 import 'package:celebrities/data/common/Resource.dart' as _i5;
 import 'package:celebrities/domain/entities/article.dart' as _i6;
 import 'package:celebrities/domain/repositories/article_repository.dart' as _i2;
-import 'package:celebrities/domain/usecases/get_articles.dart' as _i3;
+import 'package:celebrities/domain/usecases/get_articles_usecase.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -35,11 +35,12 @@ class _FakeArticleRepository_0 extends _i1.SmartFake
         );
 }
 
-/// A class which mocks [GetArticles].
+/// A class which mocks [GetArticlesUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGetArticles extends _i1.Mock implements _i3.GetArticles {
-  MockGetArticles() {
+class MockGetArticlesUseCase extends _i1.Mock
+    implements _i3.GetArticlesUseCase {
+  MockGetArticlesUseCase() {
     _i1.throwOnMissingStub(this);
   }
 

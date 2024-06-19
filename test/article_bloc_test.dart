@@ -1,12 +1,13 @@
+import 'package:celebrities/data/common/Resource.dart';
 import 'package:celebrities/domain/entities/article.dart';
-import 'package:celebrities/domain/usecases/get_articles.dart';
+import 'package:celebrities/domain/usecases/get_articles_usecase.dart';
 import 'package:celebrities/presentation/article/bloc/article_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'article_bloc_test.mocks.dart';
 
-@GenerateMocks([GetArticles])
+@GenerateMocks([GetArticlesUseCase])
 void main() {
   late ArticleBloc bloc;
   late MockGetArticles mockGetArticles;
@@ -28,36 +29,41 @@ void main() {
 
   final tArticleList = [tArticle];
 
-  test('initial state should be empty list', () {
-    expect(bloc.articlesStream, emits([]));
+  test('initial state should be Resource.loading()', () {
+    expectLater(bloc.articlesStream, emits(Resource.loading()));
   });
 
-  test('should emit [articles] when data is gotten successfully', () async {
+  test('should emit [Resource.loading, Resource.success] when data is gotten successfully', () async {
     // arrange
-    when(mockGetArticles.execute())
-        .thenAnswer((_) => Stream.value(tArticleList));
+    when(mockGetArticles.execute()).thenAnswer((_) => Stream.fromIterable([
+      Resource.loading(),
+      Resource.success(tArticleList)
+    ]));
 
     // assert later
     final expected = [
-      [], // Initial state is an empty list
-      tArticleList, // Then it emits the list of articles
+      Resource.loading(), // Initial state is loading
+      Resource.success(tArticleList), // Then it emits the list of articles
     ];
-    expect(bloc.articlesStream, emitsInOrder(expected));
+    expectLater(bloc.articlesStream, emitsInOrder(expected));
 
     // act
     await bloc.fetchArticles();
   });
 
-  test('should emit [error] when getting data fails', () async {
+  test('should emit [Resource.loading, Resource.error] when getting data fails', () async {
     // arrange
-    when(mockGetArticles.execute()).thenAnswer((_) => Stream.error('Server Failure'));
+    when(mockGetArticles.execute()).thenAnswer((_) => Stream.fromIterable([
+      Resource.loading(),
+      Resource.error('Server Failure')
+    ]));
 
     // assert later
     final expected = [
-      [], // Initial state is an empty list
-      emitsError('Server Failure'),
+      Resource.loading(), // Initial state is loading
+      Resource.error('Server Failure'), // Then it emits the error
     ];
-    expect(bloc.articlesStream, emitsInOrder(expected));
+    expectLater(bloc.articlesStream, emitsInOrder(expected));
 
     // act
     await bloc.fetchArticles();
