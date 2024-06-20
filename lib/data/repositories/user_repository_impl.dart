@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:celebrities/core/network/api_client.dart';
 import 'package:celebrities/core/network/auth_api.dart';
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 import 'package:celebrities/domain/repositories/auth_repository.dart';
 import 'package:injectable/injectable.dart';
 

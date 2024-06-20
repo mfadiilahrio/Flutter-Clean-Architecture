@@ -1,4 +1,4 @@
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 import 'package:celebrities/domain/usecases/login_usecase.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:injectable/injectable.dart';

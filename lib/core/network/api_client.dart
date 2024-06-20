@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:celebrities/data/local/shared_preferences_service.dart';
+import 'package:celebrities/main.dart'; // Import the navigatorKey
 
 @injectable
 class ApiClient {
@@ -81,8 +83,8 @@ class ApiClient {
 
   Future<void> _logout() async {
     await _sharedPreferencesService.clear();
-    // Arahkan pengguna ke halaman login
-    // Anda mungkin perlu menggunakan navigator untuk ini, atau metode lain tergantung pada arsitektur aplikasi Anda
+    // Navigate to the login page using navigatorKey
+    navigatorKey.currentState!.pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
   }
 
   void _logResponse(http.Response response) {

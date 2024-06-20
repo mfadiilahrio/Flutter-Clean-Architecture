@@ -1,4 +1,4 @@
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/usecases/get_articles_usecase.dart';
 import 'package:rxdart/rxdart.dart';
@@ -23,6 +23,8 @@ class ArticleBloc {
       _articlesSubject.add(Resource.error(e.toString()));
     }
   }
+
+  Resource<List<Article>>? get currentArticles => _articlesSubject.valueOrNull;
 
   void dispose() {
     _articlesSubject.close();

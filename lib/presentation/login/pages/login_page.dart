@@ -4,7 +4,7 @@ import 'package:celebrities/presentation/common/CustomTextFormField.dart';
 import 'package:celebrities/presentation/login/bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 

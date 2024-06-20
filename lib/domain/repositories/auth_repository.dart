@@ -1,4 +1,4 @@
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 
 abstract class UserRepository {
   Stream<Resource<String>> login({

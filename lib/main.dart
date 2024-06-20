@@ -1,4 +1,5 @@
 import 'package:celebrities/data/local/shared_preferences_service.dart';
+import 'package:celebrities/data/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'di/di.dart';
@@ -6,8 +7,9 @@ import 'presentation/article/pages/article_page.dart';
 import 'presentation/login/pages/login_page.dart';
 import 'presentation/profile/pages/profile_page.dart';
 import 'presentation/sync/pages/sync_page.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,83 +29,13 @@ class MyApp extends StatelessWidget {
 
   MyApp({required this.isLoggedIn});
 
-  static const MaterialColor whiteSwatch = MaterialColor(
-    _whitePrimaryValue,
-    <int, Color>{
-      50: Color(0xFFFFFFFF),
-      100: Color(0xFFFFFFFF),
-      200: Color(0xFFFFFFFF),
-      300: Color(0xFFFFFFFF),
-      400: Color(0xFFFFFFFF),
-      500: Color(_whitePrimaryValue),
-      600: Color(0xFFFFFFFF),
-      700: Color(0xFFFFFFFF),
-      800: Color(0xFFFFFFFF),
-      900: Color(0xFFFFFFFF),
-    },
-  );
-  static const int _whitePrimaryValue = 0xFFFFFFFF;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Celebrities',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.pink,
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.pink,
-          brightness: Brightness.light,
-        ).copyWith(
-          secondary: Colors.pink,
-          background: Colors.white,
-          onBackground: Colors.black,
-        ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 4.0, // Shadow effect for light theme
-          iconTheme: IconThemeData(color: Colors.black),
-          shadowColor: Colors.grey.withOpacity(0.9),
-        ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.pink,
-          unselectedItemColor: Colors.grey,
-        ),
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(color: Colors.black),
-          bodyMedium: TextStyle(color: Colors.black),
-        ),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.pink,
-        scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.pink,
-          brightness: Brightness.dark,
-        ).copyWith(
-          secondary: Colors.pink,
-          background: Colors.black,
-          onBackground: Colors.white,
-        ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black,
-          elevation: 4.0, // Shadow effect for dark theme
-          iconTheme: IconThemeData(color: Colors.white),
-          shadowColor: Colors.grey.withOpacity(0.5),
-        ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.black,
-          selectedItemColor: Colors.pink,
-          unselectedItemColor: Colors.grey,
-        ),
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(color: Colors.white),
-          bodyMedium: TextStyle(color: Colors.white),
-        ),
-      ),
+      theme: buildLightTheme(),  // Use buildLightTheme
+      darkTheme: buildDarkTheme(),  // Use buildDarkTheme
       themeMode: ThemeMode.system, // Follow system theme
       initialRoute: isLoggedIn ? '/home' : '/login',
       routes: {

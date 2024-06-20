@@ -1,6 +1,50 @@
+import 'package:celebrities/presentation/common/CustomButtomPopUp.dart';
+import 'package:celebrities/presentation/common/CustomButton.dart';
 import 'package:flutter/material.dart';
+import 'package:celebrities/data/local/shared_preferences_service.dart';
+import 'package:celebrities/data/local/database_helper.dart';
+import 'package:get_it/get_it.dart';
 
 class ProfilePage extends StatelessWidget {
+  final SharedPreferencesService _sharedPrefs = GetIt.I<SharedPreferencesService>();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  Future<void> _logout(BuildContext context) async {
+    await _databaseHelper.deleteAllArticles(); // Hapus database lokal
+    await _sharedPrefs.clear(); // Hapus sesi
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false); // Arahkan ke halaman login
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return CustomBottomPopup(
+          imagePath: 'assets/logo.png',
+          title: 'Logout',
+          description: 'Apakah Anda yakin ingin logout?',
+          positiveButtonText: 'Ya',
+          negativeButtonText: 'Tidak',
+          onPositiveButtonPressed: () {
+            Navigator.of(context).pop();
+            _logout(context);
+          },
+          onNegativeButtonPressed: () {
+            Navigator.of(context).pop();
+          },
+          dismissible: true,
+          dismissOutside: true,
+          onDismiss: () {
+            print('Popup dismissed');
+          },
+          showCloseButton: true,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +59,12 @@ class ProfilePage extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/avatar.png'), // Ganti dengan path avatar Anda
+                child: Icon(
+                  Icons.person, // Ikon avatar bawaan Flutter
+                  size: 50,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.pink,
               ),
               SizedBox(height: 16),
               Text(
@@ -33,14 +82,10 @@ class ProfilePage extends StatelessWidget {
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Log out action
-                },
-                child: Text('Logout'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                ),
+              CustomButton(
+                text: 'Logout',
+                onPressed: () => _showLogoutConfirmation(context),
+                isLoading: false, // Sesuaikan jika perlu menampilkan loading state
               ),
             ],
           ),

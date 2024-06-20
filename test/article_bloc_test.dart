@@ -1,4 +1,4 @@
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/usecases/get_articles_usecase.dart';
 import 'package:celebrities/presentation/article/bloc/article_bloc.dart';

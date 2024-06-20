@@ -1,7 +1,6 @@
-import 'package:celebrities/data/common/Resource.dart';
+import 'package:celebrities/data/common/resource.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:celebrities/presentation/article/bloc/article_bloc.dart';
 import 'package:celebrities/presentation/article/widgets/article_widget.dart';
@@ -14,7 +13,7 @@ class ArticlePage extends StatefulWidget {
   _ArticlePageState createState() => _ArticlePageState();
 }
 
-class _ArticlePageState extends State<ArticlePage> {
+class _ArticlePageState extends State<ArticlePage> with AutomaticKeepAliveClientMixin<ArticlePage> {
   final ArticleBloc bloc = GetIt.I<ArticleBloc>();
   final CarouselController _carouselController = CarouselController();
   int _currentIndex = 0;
@@ -22,7 +21,9 @@ class _ArticlePageState extends State<ArticlePage> {
   @override
   void initState() {
     super.initState();
-    bloc.fetchArticles();
+    if (bloc.currentArticles?.status != Status.Success) {
+      bloc.fetchArticles();
+    }
   }
 
   Future<void> _refreshArticles() async {
@@ -43,6 +44,7 @@ class _ArticlePageState extends State<ArticlePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(56.0),
@@ -54,7 +56,7 @@ class _ArticlePageState extends State<ArticlePage> {
           centerTitle: true,
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 15.0, // Shadow effect for AppBar
-          iconTheme: Theme.of(context).appBarTheme.iconTheme
+          iconTheme: Theme.of(context).appBarTheme.iconTheme,
         ),
       ),
       body: RefreshIndicator(
@@ -67,72 +69,76 @@ class _ArticlePageState extends State<ArticlePage> {
             final resource = snapshot.data;
             if (resource == null || resource.status == Status.Loading) {
               return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: _buildSkeleton(MediaQuery.of(context).size.width, MediaQuery.of(context).size.width * 0.8),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(3, (index) {
-                        return Container(
-                          width: 20.0,
-                          height: 6.0,
-                          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3.0),
-                            color: Colors.grey.withOpacity(0.4),
+                key: PageStorageKey('article_scroll_position'),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 56.0), // Add padding to avoid overlap with AppBar
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: _buildSkeleton(MediaQuery.of(context).size.width, MediaQuery.of(context).size.width * 0.8),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(3, (index) {
+                          return Container(
+                            width: 20.0,
+                            height: 6.0,
+                            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3.0),
+                              color: Colors.grey.withOpacity(0.4),
+                            ),
+                          );
+                        }),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            width: 120,
+                            height: 24,
+                            color: Colors.white,
                           ),
-                        );
-                      }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
-                        child: Container(
-                          width: 120,
-                          height: 24,
-                          color: Colors.white,
                         ),
                       ),
-                    ),
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 5, // Placeholder count
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildSkeleton(double.infinity, 200.0), // Image
-                              SizedBox(height: 8),
-                              _buildSkeleton(100.0, 16.0), // Contributor name
-                              SizedBox(height: 8),
-                              _buildSkeleton(double.infinity, 18.0), // Content line 1
-                              SizedBox(height: 4),
-                              _buildSkeleton(double.infinity, 18.0), // Content line 2
-                              SizedBox(height: 4),
-                              _buildSkeleton(double.infinity, 18.0), // Content line 3
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                      ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 5, // Placeholder count
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSkeleton(double.infinity, 200.0), // Image
+                                SizedBox(height: 8),
+                                _buildSkeleton(100.0, 16.0), // Contributor name
+                                SizedBox(height: 8),
+                                _buildSkeleton(double.infinity, 18.0), // Content line 1
+                                SizedBox(height: 4),
+                                _buildSkeleton(double.infinity, 18.0), // Content line 2
+                                SizedBox(height: 4),
+                                _buildSkeleton(double.infinity, 18.0), // Content line 3
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             } else if (resource.status == Status.Error) {
@@ -141,44 +147,48 @@ class _ArticlePageState extends State<ArticlePage> {
               final articles = resource.data!;
               final sliderArticles = articles.take(3).toList();
               return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ImageSlider(
-                      articles: sliderArticles,
-                      carouselController: _carouselController,
-                      currentIndex: _currentIndex,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        'LATEST NEWS',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                key: PageStorageKey('article_scroll_position'),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 56.0), // Add padding to avoid overlap with AppBar
+                  child: Column(
+                    children: [
+                      ImageSlider(
+                        articles: sliderArticles,
+                        carouselController: _carouselController,
+                        currentIndex: _currentIndex,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
                       ),
-                    ),
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: articles.length,
-                      itemBuilder: (context, index) {
-                        final article = articles[index];
-                        return ArticleWidget(article: article);
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Text(
+                          'LATEST NEWS',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: articles.length,
+                        itemBuilder: (context, index) {
+                          final article = articles[index];
+                          return ArticleWidget(article: article);
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             } else {
@@ -191,8 +201,5 @@ class _ArticlePageState extends State<ArticlePage> {
   }
 
   @override
-  void dispose() {
-    bloc.dispose();
-    super.dispose();
-  }
+  bool get wantKeepAlive => true;
 }

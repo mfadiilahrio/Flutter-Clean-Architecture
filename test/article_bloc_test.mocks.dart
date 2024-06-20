@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:celebrities/data/common/Resource.dart' as _i5;
+import 'package:celebrities/data/common/resource.dart' as _i5;
 import 'package:celebrities/domain/entities/article.dart' as _i6;
 import 'package:celebrities/domain/repositories/article_repository.dart' as _i2;
 import 'package:celebrities/domain/usecases/get_articles_usecase.dart' as _i3;
