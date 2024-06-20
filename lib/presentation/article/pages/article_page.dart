@@ -1,12 +1,13 @@
-import 'package:celebrities/data/common/resource.dart';
-import 'package:celebrities/domain/entities/article.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:celebrities/data/common/resource.dart';
+import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/presentation/article/bloc/article_bloc.dart';
 import 'package:celebrities/presentation/article/widgets/article_widget.dart';
 import 'package:celebrities/presentation/article/widgets/image_slider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'add_article_page.dart';
 
 class ArticlePage extends StatefulWidget {
   @override
@@ -71,7 +72,7 @@ class _ArticlePageState extends State<ArticlePage> with AutomaticKeepAliveClient
               return SingleChildScrollView(
                 key: PageStorageKey('article_scroll_position'),
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 56.0), // Add padding to avoid overlap with AppBar
+                  padding: const EdgeInsets.only(top: 16.0),
                   child: Column(
                     children: [
                       Padding(
@@ -149,7 +150,7 @@ class _ArticlePageState extends State<ArticlePage> with AutomaticKeepAliveClient
               return SingleChildScrollView(
                 key: PageStorageKey('article_scroll_position'),
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 56.0), // Add padding to avoid overlap with AppBar
+                  padding: const EdgeInsets.only(top: 16.0),
                   child: Column(
                     children: [
                       ImageSlider(
@@ -196,6 +197,17 @@ class _ArticlePageState extends State<ArticlePage> with AutomaticKeepAliveClient
             }
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => AddArticlePage(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
       ),
     );
   }

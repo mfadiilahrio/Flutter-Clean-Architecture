@@ -2,7 +2,7 @@ import 'package:celebrities/presentation/common/CustomButtomPopUp.dart';
 import 'package:celebrities/presentation/common/CustomButton.dart';
 import 'package:flutter/material.dart';
 import 'package:celebrities/data/local/shared_preferences_service.dart';
-import 'package:celebrities/data/local/database_helper.dart';
+import 'package:celebrities/data/local/db/database_helper.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -11,6 +11,7 @@ class ProfilePage extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     await _databaseHelper.deleteAllArticles(); // Hapus database lokal
+    await _databaseHelper.deleteAllManualArticles(); // Hapus database lokal
     await _sharedPrefs.clear(); // Hapus sesi
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false); // Arahkan ke halaman login
   }

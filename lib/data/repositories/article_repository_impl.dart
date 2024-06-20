@@ -1,7 +1,7 @@
 import 'package:celebrities/core/network/api_client.dart';
 import 'package:celebrities/core/network/article_api.dart';
 import 'package:celebrities/data/common/resource.dart';
-import 'package:celebrities/data/local/database_helper.dart';
+import 'package:celebrities/data/local/db/database_helper.dart';
 import 'package:celebrities/data/models/article_model.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/domain/repositories/article_repository.dart';

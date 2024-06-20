@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData buildLightTheme() {
   final base = ThemeData.light();
   return base.copyWith(
+    useMaterial3: false,
     primaryColor: Colors.pink,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: base.appBarTheme.copyWith(
@@ -23,6 +24,7 @@ ThemeData buildLightTheme() {
       secondary: Colors.pink,
       onBackground: Colors.black,
       background: Colors.white,
+      primary: Colors.pink, // Ensure primary color is pink
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -40,12 +42,38 @@ ThemeData buildLightTheme() {
       backgroundColor: Colors.pink,
       foregroundColor: Colors.white,
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Colors.pink,
+      selectionColor: Colors.pink.withOpacity(0.5),
+      selectionHandleColor: Colors.pink,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.pink),
+      ),
+      labelStyle: TextStyle(color: Colors.pink),
+    ),
+    dialogBackgroundColor: Colors.white,
+    dialogTheme: DialogTheme(
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+      contentTextStyle: TextStyle(color: Colors.black, fontSize: 18),
+    ),
+    datePickerTheme: DatePickerThemeData(
+      headerBackgroundColor: Colors.white,
+      headerForegroundColor: Colors.black,
+      dayStyle: TextStyle(color: Colors.black),
+      todayBorder: BorderSide(color: Colors.pink),
+      todayForegroundColor: MaterialStateProperty.all(Colors.pink),
+      todayBackgroundColor: MaterialStateProperty.all(Colors.pink.withOpacity(0.1)),
+    ),
   );
 }
 
 ThemeData buildDarkTheme() {
   final base = ThemeData.dark();
   return base.copyWith(
+    useMaterial3: false,
     primaryColor: Colors.pink,
     scaffoldBackgroundColor: Colors.black,
     appBarTheme: base.appBarTheme.copyWith(
@@ -66,6 +94,7 @@ ThemeData buildDarkTheme() {
       secondary: Colors.pink,
       onBackground: Colors.white,
       background: Colors.black,
+      primary: Colors.pink, // Ensure primary color is pink
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -82,6 +111,31 @@ ThemeData buildDarkTheme() {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: Colors.pink,
       foregroundColor: Colors.white,
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Colors.pink,
+      selectionColor: Colors.pink.withOpacity(0.5),
+      selectionHandleColor: Colors.pink,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.pink),
+      ),
+      labelStyle: TextStyle(color: Colors.pink),
+    ),
+    dialogBackgroundColor: Colors.black,
+    dialogTheme: DialogTheme(
+      backgroundColor: Colors.black,
+      titleTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+      contentTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+    ),
+    datePickerTheme: DatePickerThemeData(
+      headerBackgroundColor: Colors.black,
+      headerForegroundColor: Colors.white,
+      dayStyle: TextStyle(color: Colors.white),
+      todayBorder: BorderSide(color: Colors.pink),
+      todayForegroundColor: MaterialStateProperty.all(Colors.pink),
+      todayBackgroundColor: MaterialStateProperty.all(Colors.pink.withOpacity(0.1)),
     ),
   );
 }
