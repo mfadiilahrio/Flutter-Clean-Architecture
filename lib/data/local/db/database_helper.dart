@@ -82,4 +82,13 @@ class DatabaseHelper {
       return ArticleModel.fromJson(jsonMap);
     });
   }
+
+  Future<void> deleteManualArticle(String id) async {
+    final db = await database;
+    await db.delete(
+      ManualArticlesTable.tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

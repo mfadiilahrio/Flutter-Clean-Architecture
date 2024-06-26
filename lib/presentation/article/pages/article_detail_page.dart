@@ -1,10 +1,10 @@
+import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:flutter/services.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final Article article;
@@ -55,9 +55,90 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     );
   }
 
+  bool isLocal(String url) {
+    return Uri.parse(url).scheme.isEmpty;
+  }
+
+  Widget _buildImage(String url, double width, double height, int index) {
+    return Stack(
+      children: [
+        if (_isSlideshowLoading[index]) _buildShimmer(width, height),
+        isLocal(url)
+            ? Image.file(
+          File(url),
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+          frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded || frame != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    _isSlideshowLoading[index] = false;
+                  });
+                }
+              });
+              return child;
+            }
+            return _buildShimmer(width, height);
+          },
+          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _isSlideshowLoading[index] = false;
+                });
+              }
+            });
+            return Container(
+              width: width,
+              height: height,
+              color: Colors.grey[300],
+            );
+          },
+        )
+            : Image.network(
+          url,
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+          frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded || frame != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    _isSlideshowLoading[index] = false;
+                  });
+                }
+              });
+              return child;
+            }
+            return _buildShimmer(width, height);
+          },
+          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _isSlideshowLoading[index] = false;
+                });
+              }
+            });
+            return Container(
+              width: width,
+              height: height,
+              color: Colors.grey[300],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool hasSlideshow = widget.article.slideshow.isNotEmpty;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(56.0),
@@ -95,29 +176,63 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
           children: [
             Text(
               widget.article.title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: textTheme.headline6?.copyWith(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 18.0),
             Text(
               widget.article.contributorName,
-              style: TextStyle(fontSize: 14, color: Colors.pink),
+              style: textTheme.subtitle2?.copyWith(color: Colors.pink),
             ),
             SizedBox(height: 2.0),
             Text(
               formatDate(widget.article.createdAt),
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: textTheme.bodyText2?.copyWith(color: Colors.grey),
             ),
             SizedBox(height: 16.0),
             Stack(
               children: [
                 if (_isMainImageLoading) _buildShimmer(double.infinity, 200.0),
-                Image.network(
-                  hasSlideshow ? widget.article.slideshow[_selectedImageIndex] : widget.article.contentThumbnail,
+                isLocal(widget.article.slideshow[_selectedImageIndex])
+                    ? Image.file(
+                  File(widget.article.slideshow[_selectedImageIndex]),
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: 200.0,
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) {
+                  frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+                    if (wasSynchronouslyLoaded || frame != null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          setState(() {
+                            _isMainImageLoading = false;
+                          });
+                        }
+                      });
+                      return child;
+                    }
+                    return _buildShimmer(double.infinity, 200.0);
+                  },
+                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        setState(() {
+                          _isMainImageLoading = false;
+                        });
+                      }
+                    });
+                    return Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey[300],
+                    );
+                  },
+                )
+                    : Image.network(
+                  widget.article.slideshow[_selectedImageIndex],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 200.0,
+                  frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+                    if (wasSynchronouslyLoaded || frame != null) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (mounted) {
                           setState(() {
@@ -160,48 +275,9 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                         _selectedImageIndex = index;
                       });
                     },
-                    child: Stack(
-                      children: [
-                        if (_isSlideshowLoading[index]) _buildShimmer(100.0, 100.0),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Image.network(
-                            widget.article.slideshow[index],
-                            width: 100.0,
-                            height: 100.0,
-                            fit: BoxFit.cover,
-                            color: _selectedImageIndex == index ? Colors.black.withOpacity(0.4) : null,
-                            colorBlendMode: BlendMode.darken,
-                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) {
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isSlideshowLoading[index] = false;
-                                    });
-                                  }
-                                });
-                                return child;
-                              }
-                              return _buildShimmer(100.0, 100.0);
-                            },
-                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (mounted) {
-                                  setState(() {
-                                    _isSlideshowLoading[index] = false;
-                                  });
-                                }
-                              });
-                              return Container(
-                                width: 100.0,
-                                height: 100.0,
-                                color: Colors.grey[300],
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: _buildImage(widget.article.slideshow[index], 100.0, 100.0, index),
                     ),
                   );
                 },
@@ -211,18 +287,18 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             SizedBox(height: 16.0),
             Text(
               "Foto: " + widget.article.contributorName,
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+              style: textTheme.caption?.copyWith(fontStyle: FontStyle.italic),
             ),
             SizedBox(height: 16.0),
             Text(
               widget.article.content,
-              style: TextStyle(fontSize: 18),
+              style: textTheme.bodyText1,
             ),
             SizedBox(height: 16.0),
             RichText(
               text: TextSpan(
                 text: 'Baca juga: ',
-                style: TextStyle(fontSize: 16),
+                style: textTheme.titleMedium,
                 children: <TextSpan>[
                   TextSpan(
                     text: 'Wah! Ternyata Ini Kebiasaan Tidur Aneh Anggota BTS',

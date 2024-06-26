@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FormValidationNotifier extends ValueNotifier<bool> {
   FormValidationNotifier() : super(false);
@@ -8,6 +9,8 @@ class FormValidationNotifier extends ValueNotifier<bool> {
   final TextEditingController contributorNameController = TextEditingController();
   final TextEditingController thumbnailController = TextEditingController();
   final TextEditingController createdAtController = TextEditingController();
+
+  List<XFile> _images = [];
 
   void initListeners() {
     titleController.addListener(_validateForm);
@@ -30,6 +33,12 @@ class FormValidationNotifier extends ValueNotifier<bool> {
         contentController.text.isNotEmpty &&
         contributorNameController.text.isNotEmpty &&
         thumbnailController.text.isNotEmpty &&
-        createdAtController.text.isNotEmpty;
+        createdAtController.text.isNotEmpty &&
+        _images.isNotEmpty;
+  }
+
+  void validateForm(List<XFile> images) {
+    _images = images;
+    _validateForm();
   }
 }

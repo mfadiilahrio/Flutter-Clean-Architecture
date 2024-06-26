@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:celebrities/domain/entities/article.dart';
 import 'package:celebrities/presentation/article/pages/article_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ArticleWidget extends StatelessWidget {
   final Article article;
@@ -22,6 +24,78 @@ class ArticleWidget extends StatelessWidget {
     }
   }
 
+  bool isLocal(String url) {
+    return !url.startsWith('http');
+  }
+
+  Widget _buildShimmer(double width, double height) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: width,
+        height: height,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildImage(String url) {
+    return isLocal(url)
+        ? Image.file(
+      File(url),
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: 200,
+      frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded || frame != null) {
+          return child;
+        } else {
+          return _buildShimmer(double.infinity, 200.0);
+        }
+      },
+      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+        return Container(
+          width: double.infinity,
+          height: 200,
+          color: Colors.grey[300],
+          child: Center(
+            child: Text(
+              'Failed to load image',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      },
+    )
+        : Image.network(
+      url,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: 200,
+      frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded || frame != null) {
+          return child;
+        } else {
+          return _buildShimmer(double.infinity, 200.0);
+        }
+      },
+      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+        return Container(
+          width: double.infinity,
+          height: 200,
+          color: Colors.grey[300],
+          child: Center(
+            child: Text(
+              'Failed to load image',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -38,29 +112,7 @@ class ArticleWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              article.contentThumbnail,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 200,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                return Container(
-                  width: double.infinity,
-                  height: 200,
-                  color: Colors.grey[300], // Grey background on error
-                );
-              },
-            ),
+            _buildImage(article.contentThumbnail),
             const SizedBox(height: 8),
             Text(
               article.contributorName,

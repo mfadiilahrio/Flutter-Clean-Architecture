@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:celebrities/data/local/db/database_helper.dart';
 import 'package:celebrities/presentation/common/CustomButtomPopUp.dart';
 import 'package:celebrities/presentation/common/CustomButton.dart';
@@ -5,6 +6,7 @@ import 'package:celebrities/presentation/common/CustomTextFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:celebrities/data/models/article_model.dart';
+import 'package:image_picker/image_picker.dart';
 import 'form_validation.dart';
 
 class AddArticlePage extends StatefulWidget {
@@ -16,9 +18,11 @@ class _AddArticlePageState extends State<AddArticlePage> {
   final _formKey = GlobalKey<FormState>();
   final FormValidationNotifier _formValidationNotifier = FormValidationNotifier();
   final TextEditingController _displayDateController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  List<XFile> _selectedImages = [];
 
   @override
   void initState() {
@@ -65,6 +69,44 @@ class _AddArticlePageState extends State<AddArticlePage> {
     }
   }
 
+  Future<void> _pickImage() async {
+    try {
+      final List<XFile>? pickedFiles = await _picker.pickMultiImage(
+        imageQuality: 50,
+        maxWidth: 800,
+        maxHeight: 800,
+      );
+
+      if (pickedFiles != null) {
+        setState(() {
+          _selectedImages.addAll(pickedFiles.take(4 - _selectedImages.length));
+        });
+        _formValidationNotifier.validateForm(_selectedImages);
+      }
+    } catch (e) {
+      _showPermissionPopup();
+    }
+  }
+
+  void _showPermissionPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomPopup(
+          imagePath: 'assets/permission.png',
+          title: 'Permission Required',
+          description: 'Please grant the required permissions to access photos.',
+          positiveButtonText: 'OK',
+          onPositiveButtonPressed: () {
+            Navigator.of(context).pop();
+          },
+          dismissible: false,
+          showCloseButton: false,
+        );
+      },
+    );
+  }
+
   Future<void> _saveArticle() async {
     if (_formKey.currentState!.validate()) {
       final newArticle = ArticleModel(
@@ -74,7 +116,7 @@ class _AddArticlePageState extends State<AddArticlePage> {
         contentThumbnail: _formValidationNotifier.thumbnailController.text,
         contributorName: _formValidationNotifier.contributorNameController.text,
         createdAt: _formValidationNotifier.createdAtController.text,
-        slideshow: [],
+        slideshow: _selectedImages.map((file) => file.path).toList(),
       );
 
       final dbHelper = DatabaseHelper();
@@ -102,6 +144,13 @@ class _AddArticlePageState extends State<AddArticlePage> {
         );
       },
     );
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+      _formValidationNotifier.validateForm(_selectedImages);
+    });
   }
 
   @override
@@ -181,6 +230,50 @@ class _AddArticlePageState extends State<AddArticlePage> {
                       },
                     ),
                   ),
+                ),
+                SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Foto (Maksimal 4, jpg/JPG/jpeg/png)',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _selectedImages.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        XFile image = entry.value;
+                        return Stack(
+                          children: [
+                            Image.file(
+                              File(image.path),
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                            Positioned(
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => _removeImage(index),
+                                child: Icon(
+                                  Icons.remove_circle,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: _selectedImages.length < 4 ? _pickImage : null,
+                      child: Text('Tambah Foto'),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 16),
                 ValueListenableBuilder<bool>(
