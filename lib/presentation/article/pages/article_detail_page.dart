@@ -189,7 +189,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
               style: textTheme.bodyText2?.copyWith(color: Colors.grey),
             ),
             SizedBox(height: 16.0),
-            Stack(
+            if (hasSlideshow) Stack(
               children: [
                 if (_isMainImageLoading) _buildShimmer(double.infinity, 200.0),
                 isLocal(widget.article.slideshow[_selectedImageIndex])
